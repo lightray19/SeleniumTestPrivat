@@ -1,8 +1,11 @@
+import org.junit.Assert;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WindowType;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 
@@ -17,10 +20,13 @@ public class PrivatTest {
         WebDriver driver = new ChromeDriver();
         // Создание ожидание элемента перед тем, как над ним воздействовать
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(3));
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
 
         // Непосредственно логика теста
         // 1. Перейти на страницу
         driver.get("https://next.privat24.ua/money-transfer/card");
+        driver.manage().window().maximize();
 
         // 2. Описать элемент интерфейса
 
@@ -41,6 +47,7 @@ public class PrivatTest {
 
         // 3. Действия над элементами интерфейса
 
+
         driver.findElement(cardNumber1).sendKeys("4567739561253907");
         driver.findElement(expData).sendKeys("0924");
         driver.findElement(cvv).sendKeys("528");
@@ -56,7 +63,23 @@ public class PrivatTest {
         driver.findElement(comment).sendKeys("Test Privat");
         driver.findElement(submitBtn).click();
 
-        driver.close();
+       // By linkTerms = By.xpath("//a[@href='https://privatbank.ua/terms']");
+
+        // driver.findElement(linkTerms).click();
+        //driver.switchTo().window(String.valueOf(driver.getWindowHandles().toArray()[1]))
+        wait.until(ExpectedConditions.textToBePresentInElementLocated
+                (By.xpath("//*[@id='app']/div[2]/section/div/div[1]/div[1]/div/div[1]/div[2]/div[2]/div"),
+                        "Переказ між своїми рахунками, з/на картку VISA/MasterCard інших українських та закордонних банків."));
+
+        // Assert.assertEquals("Переказ між своїми рахунками, з/на картку VISA/MasterCard інших українських та закордонних банків.",
+                // driver.findElement(By.xpath("//*[@id='app']/div[2]/section/div/div[1]/div[1]/div/div[1]/div[2]/div[2]/div")).getText());
+
+        Assert.assertEquals("4567 7395 6125 3907", driver.findElement(By.xpath("//span[@data-qa-node='payer-card']")).getText());
+        Assert.assertEquals("4552 3314 4813 8217", driver.findElement(By.xpath("//span[@data-qa-node='receiver-card']")).getText());
+        Assert.assertEquals("10 USD", driver.findElement(By.xpath("//div[@data-qa-node='payer-amount']")).getText());
+        Assert.assertEquals("FEDERICO STOJAN", driver.findElement(By.xpath("//div[@data-qa-node='receiver-name']")).getText());
+
+        //driver.close();
 
         /**
          * Команды Selenium:
@@ -69,6 +92,8 @@ public class PrivatTest {
          * 7. close() - закрыть окно браузера и если оно последнее, то и сам браузер
          * 8. quick() - закрыть драйвер и браузер
          * 9. implicitlyWait() - явновое ожидание элемента определенное время
+         * 10. manage.fullscreen - полноэкранный режим
+         * 11. manage.maximize - полный размер экрана
          */
 
     }
